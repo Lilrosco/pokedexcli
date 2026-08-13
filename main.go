@@ -7,20 +7,33 @@ import (
 )
 
 func main() {
-	scanner := bufio.NewScanner(os.Stdin)
+	scanner := bufio.NewReader(os.Stdin)
+	fmt.Println("Welcome to the Pokedex!")
 
 	for {
 		fmt.Print("Pokedex > ")
+		input, err := scanner.ReadString('\n')
 
-		if scanner.Scan() {
-			input := scanner.Text()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error occured: %v", err)
+		}
 
-			if len(input) == 0 {
-				continue
-			}
+		if len(input) == 0 {
+			continue
+		}
 
-			cleanInput := cleanInput(input)
-			fmt.Printf("Your command was: %s\n", cleanInput[0])
+		cmd := cleanInput(input)[0]
+		result, ok := getCommand()[cmd]
+
+		if !ok {
+			fmt.Printf("Unknown command: %s\n", cmd)
+			result = getCommand()["help"]
+		}
+
+		err = result.callback()
+
+		if err != nil {
+			fmt.Printf("%v\n", err.Error())
 		}
 	}
 }
