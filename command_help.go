@@ -4,10 +4,10 @@ import (
 	"fmt"
 )
 
-func commandHelp(state *config) error {
+func commandHelp(cfg *config) error {
 	fmt.Print("Usage: \n\n")
 
-	for _, cmd := range getCommand() {
+	for _, cmd := range getCommands() {
 		fmt.Printf("%s: %s\n", cmd.name, cmd.description)
 	}
 

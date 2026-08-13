@@ -7,9 +7,8 @@ import (
 	"os"
 )
 
-func startRepl() {
+func startRepl(cfg *config) {
 	scanner := bufio.NewReader(os.Stdin)
-	state := &config{commands: getCommand()}
 	fmt.Println("Welcome to the Pokedex!")
 
 	for {
@@ -25,14 +24,14 @@ func startRepl() {
 		}
 
 		cmd := cleanInput(input)[0]
-		result, ok := getCommand()[cmd]
+		result, ok := cfg.commands[cmd]
 
 		if !ok {
 			fmt.Printf("Unknown command: %s\n", cmd)
-			result = getCommand()["help"]
+			result = getCommands()["help"]
 		}
 
-		err = result.callback(state)
+		err = result.callback(cfg)
 
 		if err != nil {
 			fmt.Printf("%v\n", err.Error())
@@ -51,10 +50,10 @@ type config struct {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(state *config) error
+	callback    func(cfg *config) error
 }
 
-func getCommand() map[string] cliCommand{
+func getCommands() map[string] cliCommand{
 	return map[string] cliCommand {
 		"exit": {
         	name:        "exit",
