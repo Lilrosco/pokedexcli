@@ -9,7 +9,7 @@ import (
 
 func startRepl() {
 	scanner := bufio.NewReader(os.Stdin)
-	state := &config{}
+	state := &config{commands: getCommand()}
 	fmt.Println("Welcome to the Pokedex!")
 
 	for {
@@ -45,7 +45,7 @@ func cleanInput(text string) []string {
 }
 
 type config struct {
-
+	commands map[string] cliCommand
 }
 
 type cliCommand struct {
