@@ -1,19 +1,57 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"strings"
 	"os"
 )
 
+func startRepl() {
+	scanner := bufio.NewReader(os.Stdin)
+	state := &config{}
+	fmt.Println("Welcome to the Pokedex!")
+
+	for {
+		fmt.Print("Pokedex > ")
+		input, err := scanner.ReadString('\n')
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error occured: %v", err)
+		}
+
+		if len(input) == 0 {
+			continue
+		}
+
+		cmd := cleanInput(input)[0]
+		result, ok := getCommand()[cmd]
+
+		if !ok {
+			fmt.Printf("Unknown command: %s\n", cmd)
+			result = getCommand()["help"]
+		}
+
+		err = result.callback(state)
+
+		if err != nil {
+			fmt.Printf("%v\n", err.Error())
+		}
+	}
+}
+
 func cleanInput(text string) []string {
 	return strings.Fields(strings.ToLower(text))
+}
+
+type config struct {
+
 }
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(state *config) error
 }
 
 func getCommand() map[string] cliCommand{
@@ -29,20 +67,4 @@ func getCommand() map[string] cliCommand{
 			callback:    commandHelp,
 		},
 	}		
-}
-
-func commandExit() error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
-	return nil
-}
-
-func commandHelp() error {
-	fmt.Print("Usage: \n\n")
-
-	for _, cmd := range getCommand() {
-		fmt.Printf("%s: %s\n", cmd.name, cmd.description)
-	}
-
-	return nil
 }
