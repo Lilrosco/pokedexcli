@@ -28,7 +28,7 @@ func startRepl(cfg *config) {
 
 		if !ok {
 			fmt.Printf("Unknown command: %s\n", cmd)
-			result = getCommands()["help"]
+			result = cfg.commands["help"]
 		}
 
 		err = result.callback(cfg)
@@ -45,6 +45,9 @@ func cleanInput(text string) []string {
 
 type config struct {
 	commands map[string] cliCommand
+	baseLocationAreasURL string
+	nextLocationAreasURL string
+	prevLocationAreasURL string
 }
 
 type cliCommand struct {
@@ -64,6 +67,16 @@ func getCommands() map[string] cliCommand{
 			name:        "help",
 			description: "Displays a help message",
 			callback:    commandHelp,
+		},
+		"map": {
+			name:        "map",
+			description: "Get the next 20 location areas",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Get the previous 20 location areas",
+			callback:    commandMapb,
 		},
 	}		
 }
