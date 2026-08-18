@@ -27,7 +27,11 @@ func fetchLocationAreas(url string) (LocationAreasAPIResponse, error) {
 	}
 
 	defer res.Body.Close()
-	data, err := io.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
+
+	if res.StatusCode > 299 {
+		return LocationAreasAPIResponse{}, fmt.Errorf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
+	}
 
 	if err != nil {
 		return LocationAreasAPIResponse{}, fmt.Errorf("error reading response: %w", err)
@@ -35,7 +39,7 @@ func fetchLocationAreas(url string) (LocationAreasAPIResponse, error) {
 
 	var apiResponse LocationAreasAPIResponse
 
-	if err := json.Unmarshal(data, &apiResponse); err != nil {
+	if err := json.Unmarshal(body, &apiResponse); err != nil {
 		return LocationAreasAPIResponse{}, fmt.Errorf("error unmarshalling json: %w", err)
 	}
 
