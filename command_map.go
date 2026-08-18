@@ -11,7 +11,7 @@ func commandMap(cfg *config) error {
 		url = cfg.nextLocationAreasURL
 	}
 
-	apiResponse, err := fetchLocationAreas(url)
+	apiResponse, err := fetchLocationAreas(url, cfg.cache)
 
 	if err != nil {
 		return err

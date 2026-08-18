@@ -13,7 +13,7 @@ func commandMapb(cfg *config) error {
 		url = cfg.prevLocationAreasURL
 	}
 
-	apiResponse, err := fetchLocationAreas(url)
+	apiResponse, err := fetchLocationAreas(url, cfg.cache)
 
 	if err != nil {
 		return err

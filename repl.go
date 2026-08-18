@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 	"os"
+
+	"github.com/Lilrosco/pokedexcli/internal/pokecache"
 )
 
 func startRepl(cfg *config) {
@@ -44,10 +46,11 @@ func cleanInput(text string) []string {
 }
 
 type config struct {
-	commands map[string] cliCommand
+	commands map[string]cliCommand
 	baseLocationAreasURL string
 	nextLocationAreasURL string
 	prevLocationAreasURL string
+	cache *pokecache.Cache
 }
 
 type cliCommand struct {
@@ -56,7 +59,7 @@ type cliCommand struct {
 	callback    func(cfg *config) error
 }
 
-func getCommands() map[string] cliCommand{
+func getCommands() map[string]cliCommand{
 	return map[string] cliCommand {
 		"exit": {
         	name:        "exit",
